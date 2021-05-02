@@ -1,0 +1,100 @@
+﻿/*
+ Login Success JSON:
+
+{
+  "EntityToken":{
+    "Entity":{
+      "Id":"C86107F666916535",
+      "Type":"title_player_account"
+    },
+    "EntityToken":"M3x7ImkiOiIyMDIxLTA1LTAxVDIyOjM1OjE0Ljg1NjQ4MjRaIiwiaWRwIjoiQ3VzdG9tIiwiZSI6IjIwMjEtMDUtMDJUMjI6MzU6MTQuODU2NDgyNFoiLCJoIjoiRjI4NjMzMEIzMjZEODQ5OSIsInMiOiJlWDgrNVpwaFEyMDBQSUZjMFhYa1oySnRzUHB5by9EWm5ra25aQ2poZUFnPSIsImVjIjoidGl0bGVfcGxheWVyX2FjY291bnQhQkQyODVBQzM3OUI0MENCQS9CRDkwMy9DREE1N0ZERTkzQTkxNTZBL0M4NjEwN0Y2NjY5MTY1MzUvIiwiZWkiOiJDODYxMDdGNjY2OTE2NTM1IiwiZXQiOiJ0aXRsZV9wbGF5ZXJfYWNjb3VudCJ9",
+    "TokenExpiration":"2021-05-02T22:35:14.856Z"
+  },
+  "InfoResultPayload":null,
+  "LastLoginTime":"2021-05-01T22:30:00.838Z",
+  "NewlyCreated":false,
+  "PlayFabId":"CDA57FDE93A9156A",
+  "SessionTicket":"CDA57FDE93A9156A--887E31DC379E3B35-BD903-8D90CF163ACED58-tFQGB0L1AWSWncmNgRQPvQ+aK+75M6RByfl7iLjJ7TE=",
+  "SettingsForUser":{
+    "GatherDeviceInfo":true,
+    "GatherFocusInfo":true,
+    "NeedsAttribution":false
+  },
+  "TreatmentAssignment":{
+    "Variables":[
+      
+    ],
+    "Variants":[
+      
+    ]
+  },
+  "AuthenticationContext":{
+    "ClientSessionTicket":"CDA57FDE93A9156A--887E31DC379E3B35-BD903-8D90CF163ACED58-tFQGB0L1AWSWncmNgRQPvQ+aK+75M6RByfl7iLjJ7TE=",
+    "PlayFabId":"CDA57FDE93A9156A",
+    "EntityToken":"M3x7ImkiOiIyMDIxLTA1LTAxVDIyOjM1OjE0Ljg1NjQ4MjRaIiwiaWRwIjoiQ3VzdG9tIiwiZSI6IjIwMjEtMDUtMDJUMjI6MzU6MTQuODU2NDgyNFoiLCJoIjoiRjI4NjMzMEIzMjZEODQ5OSIsInMiOiJlWDgrNVpwaFEyMDBQSUZjMFhYa1oySnRzUHB5by9EWm5ra25aQ2poZUFnPSIsImVjIjoidGl0bGVfcGxheWVyX2FjY291bnQhQkQyODVBQzM3OUI0MENCQS9CRDkwMy9DREE1N0ZERTkzQTkxNTZBL0M4NjEwN0Y2NjY5MTY1MzUvIiwiZWkiOiJDODYxMDdGNjY2OTE2NTM1IiwiZXQiOiJ0aXRsZV9wbGF5ZXJfYWNjb3VudCJ9",
+    "EntityId":"C86107F666916535",
+    "EntityType":"title_player_account"
+  },
+  "Request":{
+    "CreateAccount":true,
+    "CustomId":"1cbaf5d49abcb9f33eb32459de8ed6eb502fe69e",
+    "CustomTags":null,
+    "EncryptedRequest":null,
+    "InfoRequestParameters":null,
+    "PlayerSecret":null,
+    "TitleId":"BD903",
+    "AuthenticationContext":null
+  },
+  "CustomData":null
+}
+ 
+ Get Leaderboard JSON:
+
+{
+  "Leaderboard":[
+    {
+      "DisplayName":null,
+      "PlayFabId":"CDA57FDE93A9156A",
+      "Position":0,
+      "Profile":{
+        "AdCampaignAttributions":null,
+        "AvatarUrl":null,
+        "BannedUntil":null,
+        "ContactEmailAddresses":null,
+        "Created":null,
+        "DisplayName":null,
+        "ExperimentVariants":null,
+        "LastLogin":null,
+        "LinkedAccounts":null,
+        "Locations":null,
+        "Memberships":null,
+        "Origination":null,
+        "PlayerId":"CDA57FDE93A9156A",
+        "PublisherId":"BD285AC379B40CBA",
+        "PushNotificationRegistrations":null,
+        "Statistics":null,
+        "Tags":null,
+        "TitleId":"BD903",
+        "TotalValueToDateInUSD":null,
+        "ValuesToDate":null
+      },
+      "StatValue":458
+    }
+  ],
+  "NextReset":null,
+  "Version":0,
+  "Request":{
+    "CustomTags":null,
+    "MaxResultsCount":10,
+    "ProfileConstraints":null,
+    "StartPosition":0,
+    "StatisticName":"HighScore",
+    "Version":null,
+    "AuthenticationContext":null
+  },
+  "CustomData":null
+}
+ 
+ 
+ 
+ */
