@@ -33,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (collision.collider.CompareTag("Runner"))
             {
-                gameManager.Tag(gameObject.name);
+                gameManager.Tag();
             }
         }
     }
