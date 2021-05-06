@@ -69,10 +69,12 @@ public class GameManager : MonoBehaviour
         if(player1.tag == "Chaser")
         {
             Debug.Log($"{player2.name} get away!");
+            scoreP2++;
         }
         else
         {
             Debug.Log($"{player1.name} get away!");
+            scoreP1++;
         }
 
         player1Movement.RestartPosition();
@@ -114,6 +116,6 @@ public class GameManager : MonoBehaviour
 
     private void OnGUI()
     {
-        GUI.TextArea(new Rect(Screen.width / 2 - 200, Screen.height/4, 400, 110), Mathf.RoundToInt(timeRemaining).ToString(), new GUIStyle(GUI.skin.textArea));
+        GUI.TextArea(new Rect(Screen.width / 2 - 200, Screen.height/4, 400, 110), $"{Mathf.RoundToInt(timeRemaining)} \n{scoreP1} - {scoreP2}", new GUIStyle(GUI.skin.textArea));
     }
 }
