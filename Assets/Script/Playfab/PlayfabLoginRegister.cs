@@ -1,22 +1,9 @@
 ﻿using UnityEngine;
 using PlayFab;
 using PlayFab.ClientModels;
-using System.Collections.Generic;
 using UnityEngine.UI;
 using System;
-
-[Serializable]
-public class PlayerData
-{
-    public PlayerData(string name, int size)
-    {
-        this.name = name;
-        this.size = size;
-    }
-
-    public string name;
-    public int size;
-}
+using System.Collections.Generic;
 
 public class PlayfabLoginRegister : MonoBehaviour
 {
@@ -25,43 +12,49 @@ public class PlayfabLoginRegister : MonoBehaviour
     public Text usernameText;
 
     [Header("Input Fields")]
-    public InputField name;
-    public InputField email;
-    public InputField password;
+    public InputField nameInput;
+    public InputField emailInput;
+    public InputField passwordInput;
 
     private Boolean hasLogin = false;
-    private string displayName = "";
+    public PlayerData playerData = new PlayerData();
 
     private void ClearTextFields()
     {
-        name.text = "";
-        email.text = "";
-        password.text = "";
+        nameInput.text = "";
+        emailInput.text = "";
+        passwordInput.text = "";
     }
 
-    private void Start()
+    public void OnPageActive()
     {
-        feedbackText.text = "";
-        usernameText.text = "You haven't login yet";
+        if (!hasLogin)
+        {
+            feedbackText.text = "";
+            usernameText.text = "You haven't login yet";
+        } else
+        {
+            usernameText.text = playerData.accountInfo.name;
+        }
     }
 
     public void Register()
     {
-        if (email.text.Equals("") || name.text.Equals("") || password.text.Equals(""))
+        if (emailInput.text.Equals("") || nameInput.text.Equals("") || passwordInput.text.Equals(""))
         {
             OnError("Register needs email, name, and password!");
             return;
         }
-        if (password.text.Length < 6)
+        if (passwordInput.text.Length < 6)
         {
             OnError("Password needs to be at least 6 characters!");
             return;
         }
         var request = new RegisterPlayFabUserRequest
         {
-            Email = email.text,
-            Password = password.text,
-            DisplayName = name.text,
+            Email = emailInput.text,
+            Password = passwordInput.text,
+            DisplayName = nameInput.text,
             RequireBothUsernameAndEmail = false
         };
         PlayFabClientAPI.RegisterPlayFabUser(request, OnRegisterSuccess, OnError);
@@ -69,30 +62,50 @@ public class PlayfabLoginRegister : MonoBehaviour
 
     private void OnRegisterSuccess(RegisterPlayFabUserResult result)
     {
-        feedbackText.color = new Color(0.75f, 1, 0.75f, 1);
-        feedbackText.text = "Register success!";
+        OnSuccess("Register success!");
+        SendPlayerData();
         ClearTextFields();
+    }
+
+    private void SendPlayerData()
+    {
+        var newPlayerData = new PlayerData();
+        var request = new UpdateUserDataRequest
+        {
+            Data = new Dictionary<string, string>
+            {
+                { "PlayerData", newPlayerData.ToJson() }
+            }
+        };
+        PlayFabClientAPI.UpdateUserData(request, OnDataSent, OnError);
+    }
+
+    private void OnDataSent(UpdateUserDataResult res)
+    {
+        Debug.Log("New Player data sent!");
     }
 
     public void Login()
     {
-        if (email.text.Equals("") || password.text.Equals(""))
+        if (emailInput.text.Equals("") || passwordInput.text.Equals(""))
         {
             OnError("Login needs email and password!");
             return;
         }
-        if (password.text.Length < 6)
+        if (passwordInput.text.Length < 6)
         {
             OnError("Password needs to be at least 6 characters!");
             return;
         }
         var request = new LoginWithEmailAddressRequest
         {
-            Email = email.text,
-            Password = password.text,
+            Email = emailInput.text,
+            Password = passwordInput.text,
             InfoRequestParameters = new GetPlayerCombinedInfoRequestParams
             {
-                GetPlayerProfile = true
+                GetPlayerProfile = true,
+                GetUserData = true,
+                GetUserAccountInfo = true
             }
         };
         PlayFabClientAPI.LoginWithEmailAddress(request, OnLoginSuccess, OnError);
@@ -100,24 +113,34 @@ public class PlayfabLoginRegister : MonoBehaviour
 
     private void OnLoginSuccess(LoginResult result)
     {
-        feedbackText.color = new Color(0.75f, 1, 0.75f, 1);
-        feedbackText.text = "Login success!";
+        OnSuccess("Login success!");
         usernameText.text = result.InfoResultPayload.PlayerProfile.DisplayName;
         hasLogin = true;
-        displayName = result.InfoResultPayload.PlayerProfile.DisplayName;
+        var displayName = result.InfoResultPayload.PlayerProfile.DisplayName;
+        var email = result.InfoResultPayload.AccountInfo.PrivateInfo.Email;
+        var playfabID = result.InfoResultPayload.AccountInfo.PlayFabId;
+        if (result.InfoResultPayload.UserData != null && result.InfoResultPayload.UserData.ContainsKey("PlayerData"))
+        {
+            playerData = PlayerData.FromJson(result.InfoResultPayload.UserData["PlayerData"].Value);
+        } else
+        {
+            playerData = new PlayerData();
+        }
+        
+        playerData.setAccountInfo(displayName, email, playfabID);
         ClearTextFields();
     }
 
     public void ResetPassword()
     {
-        if (email.text.Equals(""))
+        if (emailInput.text.Equals(""))
         {
             OnError("Reset Password needs email!");
             return;
         }
         var request = new SendAccountRecoveryEmailRequest
         {
-            Email = email.text,
+            Email = emailInput.text,
             TitleId = "BD903"
         };
         PlayFabClientAPI.SendAccountRecoveryEmail(request, OnPasswordRecoverySent, OnError);
@@ -125,8 +148,7 @@ public class PlayfabLoginRegister : MonoBehaviour
 
     private void OnPasswordRecoverySent(SendAccountRecoveryEmailResult result)
     {
-        feedbackText.color = new Color(0.75f, 1, 0.75f, 1);
-        feedbackText.text = "Email for password reset sent!";
+        OnSuccess("Email for password reset sent!");
     }
 
     private void OnError(PlayFabError error)
@@ -139,5 +161,26 @@ public class PlayfabLoginRegister : MonoBehaviour
     {
         feedbackText.color = new Color(1, 0.75f, 0.75f, 1);
         feedbackText.text = error;
+    }
+
+    private void OnSuccess(string success)
+    {
+        feedbackText.color = new Color(0.75f, 1, 0.75f, 1);
+        feedbackText.text = success;
+    }
+
+    public Boolean isLoggedIn()
+    {
+        return hasLogin;
+    }
+
+    public String getDisplayName()
+    {
+        return playerData.accountInfo.name;
+    }
+
+    public String getEmail()
+    {
+        return playerData.accountInfo.email;
     }
 }
