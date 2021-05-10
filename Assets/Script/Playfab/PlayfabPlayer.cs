@@ -43,7 +43,7 @@ public class PlayfabPlayer : MonoBehaviour
         }
         else
         {
-            OnError("You must login first to see the player data!");
+            PlayfabUtils.OnError(feedbackText, "You must login first to see the player data!");
         }
     }
 
@@ -70,7 +70,7 @@ public class PlayfabPlayer : MonoBehaviour
             heightText.text = loginManager.playerData.stats.height.ToString();
             rankPointsText.text = loginManager.playerData.stats.rankPoints.ToString();
 
-            OnSuccess("Player Data Updated!");
+            PlayfabUtils.OnSuccess(feedbackText, "Player Data Updated!");
         }
     }
 
@@ -78,12 +78,12 @@ public class PlayfabPlayer : MonoBehaviour
     {
         if (!loginManager.isLoggedIn())
         {
-            OnError("Please login first!");
+            PlayfabUtils.OnError(feedbackText, "Please login first!");
             return;
         }
         if (nameInput.text == "")
         {
-            OnError("New Display Name must not be empty!");
+            PlayfabUtils.OnError(feedbackText, "New Display Name must not be empty!");
             return;
         }
         var request = new UpdateUserTitleDisplayNameRequest
@@ -100,44 +100,31 @@ public class PlayfabPlayer : MonoBehaviour
 
         nameInput.text = "";
 
-        OnSuccess("Display Name Updated!");
+        PlayfabUtils.OnSuccess(feedbackText, "Display Name Updated!");
     }
 
     public void ResetPassword()
     {
         if (loginManager.getEmail() == "")
         {
-            OnError("Reset Password needs login!");
+            PlayfabUtils.OnError(feedbackText, "Reset Password needs login!");
             return;
         }
         var request = new SendAccountRecoveryEmailRequest
         {
             Email = loginManager.getEmail(),
-            TitleId = "BD903"
+            TitleId = PlayfabUtils.TITLE_ID
         };
         PlayFabClientAPI.SendAccountRecoveryEmail(request, OnPasswordRecoverySent, OnError);
     }
 
     private void OnPasswordRecoverySent(SendAccountRecoveryEmailResult result)
     {
-        OnSuccess("Email for password reset sent!");
+        PlayfabUtils.OnSuccess(feedbackText, "Email for password reset sent!");
     }
 
     private void OnError(PlayFabError error)
     {
-        feedbackText.color = new Color(1, 0.75f, 0.75f, 1);
-        feedbackText.text = error.ErrorMessage;
-    }
-
-    private void OnError(string error)
-    {
-        feedbackText.color = new Color(1, 0.75f, 0.75f, 1);
-        feedbackText.text = error;
-    }
-
-    private void OnSuccess(string success)
-    {
-        feedbackText.color = new Color(0.75f, 1, 0.75f, 1);
-        feedbackText.text = success;
+        PlayfabUtils.OnError(feedbackText, error.ErrorMessage);
     }
 }

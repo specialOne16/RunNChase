@@ -42,12 +42,12 @@ public class PlayfabLoginRegister : MonoBehaviour
     {
         if (emailInput.text.Equals("") || nameInput.text.Equals("") || passwordInput.text.Equals(""))
         {
-            OnError("Register needs email, name, and password!");
+            PlayfabUtils.OnError(feedbackText, "Register needs email, name, and password!");
             return;
         }
         if (passwordInput.text.Length < 6)
         {
-            OnError("Password needs to be at least 6 characters!");
+            PlayfabUtils.OnError(feedbackText, "Password needs to be at least 6 characters!");
             return;
         }
         var request = new RegisterPlayFabUserRequest
@@ -62,7 +62,7 @@ public class PlayfabLoginRegister : MonoBehaviour
 
     private void OnRegisterSuccess(RegisterPlayFabUserResult result)
     {
-        OnSuccess("Register success!");
+        PlayfabUtils.OnSuccess(feedbackText, "Register success!");
         SendPlayerData();
         ClearTextFields();
     }
@@ -89,12 +89,12 @@ public class PlayfabLoginRegister : MonoBehaviour
     {
         if (emailInput.text.Equals("") || passwordInput.text.Equals(""))
         {
-            OnError("Login needs email and password!");
+            PlayfabUtils.OnError(feedbackText, "Login needs email and password!");
             return;
         }
         if (passwordInput.text.Length < 6)
         {
-            OnError("Password needs to be at least 6 characters!");
+            PlayfabUtils.OnError(feedbackText, "Password needs to be at least 6 characters!");
             return;
         }
         var request = new LoginWithEmailAddressRequest
@@ -113,12 +113,14 @@ public class PlayfabLoginRegister : MonoBehaviour
 
     private void OnLoginSuccess(LoginResult result)
     {
-        OnSuccess("Login success!");
+        PlayfabUtils.OnSuccess(feedbackText, "Login success!");
         usernameText.text = result.InfoResultPayload.PlayerProfile.DisplayName;
         hasLogin = true;
         var displayName = result.InfoResultPayload.PlayerProfile.DisplayName;
         var email = result.InfoResultPayload.AccountInfo.PrivateInfo.Email;
-        var playfabID = result.InfoResultPayload.AccountInfo.PlayFabId;
+        var playfabId = result.InfoResultPayload.AccountInfo.PlayFabId;
+        var sessionTicket = result.SessionTicket;
+        var entityId = result.EntityToken.Entity.Id;
         if (result.InfoResultPayload.UserData != null && result.InfoResultPayload.UserData.ContainsKey("PlayerData"))
         {
             playerData = PlayerData.FromJson(result.InfoResultPayload.UserData["PlayerData"].Value);
@@ -127,7 +129,7 @@ public class PlayfabLoginRegister : MonoBehaviour
             playerData = new PlayerData();
         }
         
-        playerData.setAccountInfo(displayName, email, playfabID);
+        playerData.setAccountInfo(displayName, email, playfabId, sessionTicket, entityId);
         ClearTextFields();
     }
 
@@ -135,38 +137,25 @@ public class PlayfabLoginRegister : MonoBehaviour
     {
         if (emailInput.text.Equals(""))
         {
-            OnError("Reset Password needs email!");
+            PlayfabUtils.OnError(feedbackText, "Reset Password needs email!");
             return;
         }
         var request = new SendAccountRecoveryEmailRequest
         {
             Email = emailInput.text,
-            TitleId = "BD903"
+            TitleId = PlayfabUtils.TITLE_ID
         };
         PlayFabClientAPI.SendAccountRecoveryEmail(request, OnPasswordRecoverySent, OnError);
     }
 
     private void OnPasswordRecoverySent(SendAccountRecoveryEmailResult result)
     {
-        OnSuccess("Email for password reset sent!");
+        PlayfabUtils.OnSuccess(feedbackText, "Email for password reset sent!");
     }
 
     private void OnError(PlayFabError error)
     {
-        feedbackText.color = new Color(1, 0.75f, 0.75f, 1);
-        feedbackText.text = error.ErrorMessage;
-    }
-
-    private void OnError(string error)
-    {
-        feedbackText.color = new Color(1, 0.75f, 0.75f, 1);
-        feedbackText.text = error;
-    }
-
-    private void OnSuccess(string success)
-    {
-        feedbackText.color = new Color(0.75f, 1, 0.75f, 1);
-        feedbackText.text = success;
+        PlayfabUtils.OnError(feedbackText, error.ErrorMessage);
     }
 
     public Boolean isLoggedIn()
