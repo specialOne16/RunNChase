@@ -7,7 +7,9 @@ public class AccountInfo
 {
     public string name;
     public string email;
-    public string playfabID;
+    public string playfabId;
+    public string entityId;
+    public string sessionTicket;
 };
 
 [Serializable]
@@ -39,6 +41,7 @@ public class PlayerData
 
     public PlayerData()
     {
+        // Default Values
         stats = new Stats
         {
             maxSpeed = 1,
@@ -59,17 +62,21 @@ public class PlayerData
         {
             name = "",
             email = "",
-            playfabID = ""
+            playfabId = "",
+            sessionTicket = "",
+            entityId = ""
         };
     }
 
-    public void setAccountInfo(string name, string email, string playfabID)
+    public void setAccountInfo(string name, string email, string playfabId, string sessionTicket, string entityId)
     {
         accountInfo = new AccountInfo
         {
             name = name,
             email = email,
-            playfabID = playfabID
+            playfabId = playfabId,
+            sessionTicket = sessionTicket,
+            entityId = entityId
         };
     }
 

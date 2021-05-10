@@ -4,7 +4,7 @@ using PlayFab.ClientModels;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-public class PlayfabAchievement : MonoBehaviour
+public class PlayfabLeaderboard : MonoBehaviour
 {
     [Header("Text Feedback Fields")]
     public Text feedbackText;
@@ -26,7 +26,7 @@ public class PlayfabAchievement : MonoBehaviour
             GetLeaderboard();
         } else
         {
-            OnError("You must login first to see the leaderboard!");
+            PlayfabUtils.OnError(feedbackText, "You must login first to see the leaderboard!");
         }
     }
 
@@ -34,7 +34,7 @@ public class PlayfabAchievement : MonoBehaviour
     {
         if (!loginManager.isLoggedIn())
         {
-            OnError("Send score needs login first!");
+            PlayfabUtils.OnError(feedbackText, "Send score needs login first!");
             return;
         }
         var randomScore = Random.Range(0, 100);
@@ -54,7 +54,7 @@ public class PlayfabAchievement : MonoBehaviour
 
     private void OnScoreSent(UpdatePlayerStatisticsResult res)
     {
-        OnSuccess("Send score success!");
+        PlayfabUtils.OnSuccess(feedbackText, "Send score success!");
         Invoke(nameof(GetLeaderboard), .5f);
     }
 
@@ -89,24 +89,11 @@ public class PlayfabAchievement : MonoBehaviour
                 texts[2].color = Color.yellow;
             }
         }
-        OnSuccess("Leaderboard Updated!");
+        PlayfabUtils.OnSuccess(feedbackText, "Leaderboard Updated!");
     }
 
     private void OnError(PlayFabError error)
     {
-        feedbackText.color = new Color(1, 0.75f, 0.75f, 1);
-        feedbackText.text = error.ErrorMessage;
-    }
-
-    private void OnError(string error)
-    {
-        feedbackText.color = new Color(1, 0.75f, 0.75f, 1);
-        feedbackText.text = error;
-    }
-
-    private void OnSuccess(string success)
-    {
-        feedbackText.color = new Color(0.75f, 1, 0.75f, 1);
-        feedbackText.text = success;
+        PlayfabUtils.OnError(feedbackText, error.ErrorMessage);
     }
 }
