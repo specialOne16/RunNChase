@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 180016609}
   - component: {fileID: 180016608}
   - component: {fileID: 180016607}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SamplePlatform
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -274,7 +274,7 @@ GameObject:
   - component: {fileID: 838876416}
   - component: {fileID: 838876418}
   - component: {fileID: 838876417}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TopBoundary
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -382,7 +382,7 @@ GameObject:
   - component: {fileID: 1204741122}
   - component: {fileID: 1204741124}
   - component: {fileID: 1204741123}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: LeftBoundary
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -490,7 +490,7 @@ GameObject:
   - component: {fileID: 1333238235}
   - component: {fileID: 1333238237}
   - component: {fileID: 1333238236}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: RightBoundary
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -598,7 +598,7 @@ GameObject:
   - component: {fileID: 1491349764}
   - component: {fileID: 1491349766}
   - component: {fileID: 1491349765}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BottomBoundary
   m_TagString: Ground
   m_Icon: {fileID: 0}
