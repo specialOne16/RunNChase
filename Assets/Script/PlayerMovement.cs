@@ -29,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
         transform.position += movement * Time.deltaTime * speed;
 
         animator.SetBool("running", Mathf.Abs(movement.x) > 0);
-        animator.SetBool("jumping", isGrounded);
+        animator.SetBool("jumping", !isGrounded);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -40,6 +40,10 @@ public class PlayerMovement : MonoBehaviour
             {
                 gameManager.Tag();
             }
+        }
+        if (collision.collider.tag == "Ground")
+        {
+            isGrounded = true;
         }
     }
 
@@ -53,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             rigidbody2D.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+            isGrounded = false;
         }
     }
 
