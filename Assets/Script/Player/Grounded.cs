@@ -5,6 +5,7 @@ using UnityEngine;
 public class Grounded : MonoBehaviour
 {
     GameObject player;
+    public LayerMask ground;
 
     void Start()
     {
@@ -13,7 +14,7 @@ public class Grounded : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.tag == "Ground")
+        if (collision.gameObject.layer == 8)
         {
             player.GetComponent<PlayerMovement>().isGrounded = true;
         }
@@ -21,7 +22,7 @@ public class Grounded : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.collider.tag == "Ground")
+        if (collision.gameObject.layer == 8)
         {
             player.GetComponent<PlayerMovement>().isGrounded = false;
         }
