@@ -12,11 +12,13 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 initPosition;
     private Rigidbody2D rigidbody2D;
+    private Animator animator;
 
     void Start()
     {
         initPosition = transform.position;
         rigidbody2D = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
         RestartPosition();
     }
 
@@ -25,6 +27,9 @@ public class PlayerMovement : MonoBehaviour
         Jump();
         Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0f, 0f);
         transform.position += movement * Time.deltaTime * speed;
+
+        animator.SetBool("running", Mathf.Abs(movement.x) > 0);
+        animator.SetBool("jumping", !isGrounded);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -35,6 +40,10 @@ public class PlayerMovement : MonoBehaviour
             {
                 gameManager.Tag();
             }
+        }
+        if (collision.collider.tag == "Ground")
+        {
+            isGrounded = true;
         }
     }
 
@@ -48,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             rigidbody2D.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+            isGrounded = false;
         }
     }
 
