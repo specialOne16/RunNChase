@@ -31,6 +31,12 @@ public class PlayerMovement : MonoBehaviour
     public float airMoveSpeed;
     public Vector2 wallJumpAngle;
 
+    // slide
+    public float slideForce = 2.5f;
+    public float slideTime= 0.5f;
+    private bool isSliding = false;
+    private float timeCount;
+
     // Other
     private bool facing = true;
     private Rigidbody2D rb2D;
@@ -39,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rb2D = GetComponent<Rigidbody2D>();
-        wallJumpAngle.Normalize();
+        wallJumpAngle.Normalize(); 
         initPosition = transform.position;
         RestartPosition();
     }
@@ -51,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
         Jump();
         WallSlide();
         WallJump();
+        sliding();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -121,6 +128,37 @@ public class PlayerMovement : MonoBehaviour
             isJumping = false;
         }
     }
+    
+    private void sliding()
+    {
+
+        float xAngle = transform.eulerAngles.x;
+        float yAngle = transform.eulerAngles.y;
+
+
+        if (Input.GetKeyDown(KeyCode.S) && isGrounded)
+        {
+            isSliding = true;
+            timeCount = 0;
+            
+        }
+
+        if (isSliding && timeCount < slideTime)
+        {
+
+            gameObject.transform.rotation = Quaternion.Euler(xAngle, yAngle, 90.0f);
+            rb2D.velocity = new Vector2((speed + slideForce)*-wallJumpDirection, rb2D.velocity.y);
+            timeCount += Time.deltaTime;
+
+        }
+        else
+        {
+            isSliding = false;
+            gameObject.transform.rotation = Quaternion.Euler(xAngle, yAngle, 0.0f);
+
+        }
+    }
+
 
     private void WallSlide()
     {
@@ -146,6 +184,7 @@ public class PlayerMovement : MonoBehaviour
             rb2D.AddForce(new Vector2(wallJumpForce * wallJumpDirection * wallJumpAngle.x, wallJumpForce * wallJumpAngle.y), ForceMode2D.Impulse);
         }
     }
+
 
     void Flip()
     {
