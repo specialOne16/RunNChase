@@ -4584,7 +4584,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a64df4265846fb4dab448ceff8b5604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firstInput: {fileID: 0}
+  firstInput: {fileID: 724203957}
   playfabManager: {fileID: 1451138821}
 --- !u!114 &776115350
 MonoBehaviour:
