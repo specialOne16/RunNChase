@@ -8,12 +8,14 @@ public class NetPlayerController : NetworkBehaviour
     [HideInInspector] [SyncVar(hook = nameof(Setup))] public int playerNumber;
     [SyncVar] public bool isAlive;
     [SyncVar(hook = nameof(SetPlayerTag))] public string playerTag;
+    public NetMessageSystem messageSystem;
 
     [Header("Server Side")]
     [HideInInspector] public int score = 0;
 
     [Header("Client Side")]
-    public Text nameText;
+    [HideInInspector] public string coloredName;
+    [HideInInspector] public string coloredStatus;
     [HideInInspector] public Vector3 spawnPosition;
     [HideInInspector] public Quaternion spawnRotation;
     [HideInInspector] [SyncVar(hook = nameof(SetControl))] public bool controlEnabled = false;
@@ -27,6 +29,24 @@ public class NetPlayerController : NetworkBehaviour
     private NetPlayerMovement movement;
     private PlayfabLoginRegister loginManager;
 
+    private void Start()
+    {
+        messageSystem = GameObject.Find("MessageSystem").GetComponent<NetMessageSystem>();
+    }
+
+    public override void OnStartClient()
+    {
+        UpdatePlayerData(Color.black, "Waiting for other player...");
+    }
+
+    [Command]
+    public void CmdUpdatePlayerData(string name, string status)
+    {
+        coloredName = name;
+        coloredStatus = status;
+        messageSystem.RpcUpdatePlayerStatus(playerNumber, name, status);
+    }
+
     [ClientRpc]
     public void RpcSetSpawnPoint(Vector3 position, Quaternion rotation)
     {
@@ -37,7 +57,17 @@ public class NetPlayerController : NetworkBehaviour
     public void SetPlayerTag(string oldPlayerTag, string newPlayerTag)
     {
         gameObject.tag = newPlayerTag;
-        Debug.Log($"Player {playerNumber} tag: {playerTag}");
+
+        Color textColor = newPlayerTag == "Chaser" ? Color.red : Color.black;
+        UpdatePlayerData(textColor, newPlayerTag);
+    }
+
+    [Client]
+    public void UpdatePlayerData(Color textColor, string status)
+    {
+        coloredName = "<color=#" + ColorUtility.ToHtmlStringRGB(textColor) + ">NAME" + "</color>";
+        coloredStatus = "<color=#" + ColorUtility.ToHtmlStringRGB(textColor) + ">" + status + "</color>";
+        CmdUpdatePlayerData(coloredName, coloredStatus);
     }
 
     [Client]
