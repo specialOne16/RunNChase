@@ -10,6 +10,7 @@ using PlayFab.Networking;
 public class NetClientServerConfig : MonoBehaviour
 {
     public NetConfiguration configuration;
+
 	public UnityNetworkServer UNetServer;
 
 	private List<ConnectedPlayer> _connectedPlayers;
@@ -23,7 +24,14 @@ public class NetClientServerConfig : MonoBehaviour
         else if (configuration.buildType == BuildType.LOCAL)
         {
             GetComponent<NetworkManagerHUD>().enabled = true;
-        } 
+        }
+		else if (configuration.buildType == BuildType.REMOTE_CLIENT)
+        {
+			var networkManager = GetComponent<NetGameManager>();
+			networkManager.networkAddress = configuration.ipAddress;
+			GetComponent<kcp2k.KcpTransport>().Port = configuration.port;
+			networkManager.StartClient();
+        }
     }
 
     private void StartRemoteServer()

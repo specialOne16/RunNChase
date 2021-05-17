@@ -29,6 +29,16 @@ public class NetPlayerController : NetworkBehaviour
     private NetPlayerMovement movement;
     private PlayfabLoginRegister loginManager;
 
+    [ClientCallback]
+    private void Awake()
+    {
+        var playfabManager = GameObject.Find("PlayfabManager");
+        if (playfabManager != null)
+        {
+            loginManager = playfabManager.GetComponent<PlayfabLoginRegister>();
+        }
+    }
+
     private void Start()
     {
         messageSystem = GameObject.Find("MessageSystem").GetComponent<NetMessageSystem>();
@@ -65,7 +75,12 @@ public class NetPlayerController : NetworkBehaviour
     [Client]
     public void UpdatePlayerData(Color textColor, string status)
     {
-        coloredName = "<color=#" + ColorUtility.ToHtmlStringRGB(textColor) + ">NAME" + "</color>";
+        var name = "Player " + playerNumber;
+        if (loginManager != null)
+        {
+            name = loginManager.playerData.accountInfo.name;
+        }
+        coloredName = "<color=#" + ColorUtility.ToHtmlStringRGB(textColor) + ">" + name + "</color>";
         coloredStatus = "<color=#" + ColorUtility.ToHtmlStringRGB(textColor) + ">" + status + "</color>";
         CmdUpdatePlayerData(coloredName, coloredStatus);
     }

@@ -1864,7 +1864,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 195, y: -129.715}
+  m_AnchoredPosition: {x: 93.7, y: -140.5}
   m_SizeDelta: {x: 220.43, y: 30}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &350183541
@@ -4694,7 +4694,6 @@ GameObject:
   - component: {fileID: 853621832}
   - component: {fileID: 853621831}
   - component: {fileID: 853621830}
-  - component: {fileID: 853621834}
   m_Layer: 5
   m_Name: PlayerPage
   m_TagString: Untagged
@@ -4789,20 +4788,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &853621834
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 853621829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a64df4265846fb4dab448ceff8b5604, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  firstInput: {fileID: 0}
-  playfabManager: {fileID: 0}
 --- !u!1 &880921354
 GameObject:
   m_ObjectHideFlags: 0
@@ -7621,6 +7606,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1451138822}
+  - component: {fileID: 1451138826}
   - component: {fileID: 1451138821}
   - component: {fileID: 1451138823}
   - component: {fileID: 1451138824}
@@ -7737,6 +7723,20 @@ MonoBehaviour:
   playBtn: {fileID: 1802016172}
   backBtn: {fileID: 840758162}
   enemyName: 
+  serverIp: 
+  serverPort: 0
+--- !u!114 &1451138826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1451138820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4c7c41844b92164c90abc2b2f377880, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1453056311
 GameObject:
   m_ObjectHideFlags: 0

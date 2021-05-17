@@ -13,6 +13,18 @@ public class NetConfiguration : MonoBehaviour
 
 	[Header("Server Configuration")]
 	public float shutdownTimeout = 900f;
+
+	private void Awake()
+    {
+		var playfabManager = GameObject.Find("PlayfabManager");
+		if (playfabManager != null)
+        {
+			Debug.Log("[CONFIGURATION]: Playfab Manager found!");
+			var matchmaker = playfabManager.GetComponent<PlayfabMatchmaker>();
+			ipAddress = matchmaker.serverIp;
+			port = (ushort)matchmaker.serverPort;
+        }
+    }
 }
 public enum BuildType
 {

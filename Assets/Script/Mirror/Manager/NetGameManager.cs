@@ -76,7 +76,7 @@ public class NetGameManager : NetworkManager
         {
             ServerChangeScene("MainMenu");
             Shutdown();
-            SceneManager.LoadSceneAsync(0);
+            //SceneManager.LoadSceneAsync(0);
         }
         else
         {

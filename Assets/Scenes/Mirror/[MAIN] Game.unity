@@ -1535,11 +1535,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c9fdc17b16482a46a8486e855074ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildType: 2
+  buildType: 1
   buildId: 
-  ipAddress: 
-  port: 0
-  playFabDebugging: 0
+  ipAddress: 127.0.0.1
+  port: 56100
+  playFabDebugging: 1
   shutdownTimeout: 900
 --- !u!4 &1436879149
 Transform:

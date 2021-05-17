@@ -1,10 +1,15 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using System.Net;
+using System.Net.Sockets;
+using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using PlayFab;
 using PlayFab.MultiplayerModels;
 using PlayFab.ProfilesModels;
 using PlayFab.ClientModels;
-using System.Collections;
+using System.Collections.Generic;
 
 public class PlayfabMatchmaker : MonoBehaviour
 {
@@ -22,8 +27,9 @@ public class PlayfabMatchmaker : MonoBehaviour
     private string ticketId;
     private Coroutine pollTicketCoroutine;
 
-    [HideInInspector]
-    public string enemyName = "";
+    [HideInInspector] public string enemyName = "";
+    [HideInInspector] public string serverIp = "";
+    [HideInInspector] public int serverPort = 0;
 
     public void OnPageActive()
     {
@@ -50,25 +56,72 @@ public class PlayfabMatchmaker : MonoBehaviour
     {
         PlayfabUtils.OnSuccess(feedbackText, "Matchmaking in progress...");
 
-        var request = new CreateMatchmakingTicketRequest
+        PlayFabMultiplayerAPI.ListQosServersForTitle(new ListQosServersForTitleRequest(), qosRes =>
         {
-            Creator = new MatchmakingPlayer
-            {
-                Entity = new PlayFab.MultiplayerModels.EntityKey
-                {
-                    Id = loginManager.playerData.accountInfo.entityId,
-                    Type = PlayfabUtils.ENTITY_TYPE
-                },
-                Attributes = new MatchmakingPlayerAttributes
-                {
-                    DataObject = new { }
-                }
-            },
-            GiveUpAfterSeconds = PlayfabUtils.MATCHMAKING_TIMEOUT,
-            QueueName = PlayfabUtils.MATCHMAKING_NAME
-        };
+            var qosServer = qosRes.QosServers[0].ServerUrl;
+            var qosRegion = qosRes.QosServers[0].Region;
+            Debug.Log($"Pinging QoS Server {qosServer} at {qosRegion}");
+            Debug.Log(qosRes.ToJson());
 
-        PlayFabMultiplayerAPI.CreateMatchmakingTicket(request, OnTicketCreated, OnError);
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+
+            var udpPort = 5600;
+            var done = false;
+            while (!done || udpPort > 5610)
+            {
+                try
+                {
+                    UdpClient client = new UdpClient(udpPort);
+                    client.Connect(qosServer, 3075);
+                    byte[] sendBytes = BitConverter.GetBytes(0xFFFF);
+                    client.Send(sendBytes, sendBytes.Length);
+
+                    IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 3075);
+                    byte[] receiveBytes = client.Receive(ref remoteEndPoint);
+                    client.Close();
+                    done = true;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"[QoS Ping Error]: {e.Message}");
+                    udpPort++;
+                    Debug.Log($"Retrying with port {udpPort}");
+                }
+            }
+            var pingTime = sw.ElapsedMilliseconds;
+            Debug.Log($"Ping success with {pingTime}ms");
+            if (udpPort > 5610)
+            {
+                StartMatchmaking();
+                return;
+            }
+
+            var request = new CreateMatchmakingTicketRequest
+            {
+                Creator = new MatchmakingPlayer
+                {
+                    Entity = new PlayFab.MultiplayerModels.EntityKey
+                    {
+                        Id = loginManager.playerData.accountInfo.entityId,
+                        Type = PlayfabUtils.ENTITY_TYPE
+                    },
+                    Attributes = new MatchmakingPlayerAttributes
+                    {
+                        DataObject = new LatenciesData
+                        {
+                            Latencies = new List<Latency>
+                            {
+                                { new Latency { region = qosRegion, latency = pingTime } }
+                            }
+                        }
+                    }
+                },
+                GiveUpAfterSeconds = PlayfabUtils.MATCHMAKING_TIMEOUT,
+                QueueName = PlayfabUtils.MATCHMAKING_NAME
+            };
+
+            PlayFabMultiplayerAPI.CreateMatchmakingTicket(request, OnTicketCreated, OnError);
+        }, OnError);
     }
 
     private void OnTicketCreated(CreateMatchmakingTicketResult res)
@@ -118,7 +171,8 @@ public class PlayfabMatchmaker : MonoBehaviour
         var request = new GetMatchRequest
         {
             MatchId = matchId,
-            QueueName = PlayfabUtils.MATCHMAKING_NAME
+            QueueName = PlayfabUtils.MATCHMAKING_NAME,
+
         };
 
         PlayFabMultiplayerAPI.GetMatch(request, OnMatchGet, OnError);
@@ -126,6 +180,10 @@ public class PlayfabMatchmaker : MonoBehaviour
 
     private void OnMatchGet(GetMatchResult res)
     {
+        serverIp = res.ServerDetails.IPV4Address;
+        serverPort = res.ServerDetails.Ports[0].Num;
+        Debug.Log($"Server Details - IP:{serverIp} | Port:{serverPort}");
+
         int enemyIdx = res.Members.FindIndex(x => x.Entity.Id != loginManager.playerData.accountInfo.entityId);
         var enemyEntity = res.Members[enemyIdx].Entity;
 
@@ -181,11 +239,24 @@ public class PlayfabMatchmaker : MonoBehaviour
 
     public void OnPlay()
     {
-        PlayfabUtils.OnSuccess(feedbackText, "Blom ada gameplaynya bapak");
+        SceneManager.LoadSceneAsync(1);
     }
 
     private void OnError(PlayFabError error)
     {
         PlayfabUtils.OnError(feedbackText, error.ErrorMessage);
     }
+}
+
+[Serializable]
+public class LatenciesData
+{
+    public List<Latency> Latencies;
+}
+
+[Serializable]
+public class Latency
+{
+    public string region;
+    public long latency;
 }
