@@ -14,11 +14,11 @@ public class PlayfabLeaderboard : MonoBehaviour
     public GameObject tableItemPrefab;
     public Transform tableTransform;
 
-    private PlayfabLoginRegister loginManager;
+    private PlayfabLogin loginManager;
 
     public void OnPageActive()
     {
-        loginManager = gameObject.GetComponent<PlayfabLoginRegister>();
+        loginManager = gameObject.GetComponent<PlayfabLogin>();
         feedbackText.text = "";
         usernameText.text = loginManager.getDisplayName();
         if (loginManager.isLoggedIn())

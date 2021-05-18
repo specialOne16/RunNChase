@@ -13,8 +13,8 @@ public class PlayfabPersist : MonoBehaviour
         else if (instance != this)
         {
             // Transfer playerData to the new instance
-            var oldLoginManager = instance.gameObject.GetComponent<PlayfabLoginRegister>();
-            var newLoginManager = gameObject.GetComponent<PlayfabLoginRegister>();
+            var oldLoginManager = instance.gameObject.GetComponent<PlayfabLogin>();
+            var newLoginManager = gameObject.GetComponent<PlayfabLogin>();
             newLoginManager.playerData = oldLoginManager.playerData;
             newLoginManager.hasLogin = oldLoginManager.hasLogin;
 

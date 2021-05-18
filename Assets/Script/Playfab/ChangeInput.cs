@@ -6,7 +6,7 @@ public class ChangeInput : MonoBehaviour
 {
     EventSystem system;
     public Selectable firstInput;
-    public PlayfabLoginRegister playfabManager;
+    public PlayfabLogin playfabManager;
 
     private void Start()
     {

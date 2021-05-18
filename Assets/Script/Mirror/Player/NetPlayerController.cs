@@ -27,7 +27,7 @@ public class NetPlayerController : NetworkBehaviour
     public RuntimeAnimatorController girlAnimator;
 
     private NetPlayerMovement movement;
-    private PlayfabLoginRegister loginManager;
+    private PlayfabLogin loginManager;
     private PlayfabPlayer playerManager;
 
     [ClientCallback]
@@ -36,7 +36,7 @@ public class NetPlayerController : NetworkBehaviour
         var playfabManager = GameObject.Find("PlayfabManager");
         if (playfabManager != null)
         {
-            loginManager = playfabManager.GetComponent<PlayfabLoginRegister>();
+            loginManager = playfabManager.GetComponent<PlayfabLogin>();
             playerManager = playfabManager.GetComponent<PlayfabPlayer>();
         }
     }
