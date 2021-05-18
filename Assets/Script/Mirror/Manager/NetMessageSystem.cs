@@ -20,6 +20,24 @@ public class NetMessageSystem : NetworkBehaviour
     [Header("Message Feedback")]
     public Text message;
 
+    private void Awake()
+    {
+        player1Name.text = "";
+        player1Status.text = "";
+        player2Name.text = "";
+        player2Status.text = "";
+        player1Score.text = "";
+        player2Score.text = "";
+        timer.text = "";
+        if (isServer)
+        {
+            message.text = "---Server Mode---";
+        } else
+        {
+            message.text = "Connecting to server...";
+        }
+    }
+
     [ClientRpc]
     public void RpcUpdatePlayerStatus(int playerNumber, string name, string status)
     {
@@ -49,6 +67,12 @@ public class NetMessageSystem : NetworkBehaviour
 
     [ClientRpc]
     public void RpcBroadcastMessage(string message)
+    {
+        this.message.text = message;
+    }
+
+    [TargetRpc]
+    public void TargetMessage(NetworkConnection target, string message)
     {
         this.message.text = message;
     }

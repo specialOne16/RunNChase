@@ -380,8 +380,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 30}
-  m_SizeDelta: {x: 500, y: 150}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 700, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &535459745
 MonoBehaviour:
@@ -1538,9 +1538,9 @@ MonoBehaviour:
   buildType: 1
   buildId: 
   ipAddress: 127.0.0.1
-  port: 56100
-  playFabDebugging: 1
-  shutdownTimeout: 900
+  port: 7777
+  playFabDebugging: 0
+  shutdownTimeout: 1800
 --- !u!4 &1436879149
 Transform:
   m_ObjectHideFlags: 0
@@ -3011,6 +3011,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   configuration: {fileID: 1436879148}
+  networkManager: {fileID: 982556408}
   MaxConnections: 100
   Port: 7777
 --- !u!114 &1985381590

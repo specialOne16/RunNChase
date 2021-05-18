@@ -28,6 +28,10 @@ public class NetClientServerConfig : MonoBehaviour
 		else if (configuration.buildType == BuildType.REMOTE_CLIENT)
         {
 			var networkManager = GetComponent<NetGameManager>();
+			if (NetworkClient.active)
+            {
+				networkManager.StopClient();
+            }
 			networkManager.networkAddress = configuration.ipAddress;
 			GetComponent<kcp2k.KcpTransport>().Port = configuration.port;
 			networkManager.StartClient();
@@ -36,7 +40,7 @@ public class NetClientServerConfig : MonoBehaviour
 
     private void StartRemoteServer()
     {
-        Debug.Log("[ServerStartUp].StartRemoteServer");
+        Debug.Log("[ServerStartUp]: StartRemoteServer");
         _connectedPlayers = new List<ConnectedPlayer>();
         PlayFabMultiplayerAgentAPI.Start();
         PlayFabMultiplayerAgentAPI.IsDebugging = configuration.playFabDebugging;

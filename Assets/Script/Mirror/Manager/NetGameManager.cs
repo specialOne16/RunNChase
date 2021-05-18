@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Mirror;
 using PlayFab.Networking;
+using static PlayerData;
 
 public class NetGameManager : NetworkManager
 {
@@ -32,7 +33,6 @@ public class NetGameManager : NetworkManager
     private NetPlayerController roundWinner;
     private NetPlayerController gameWinner;
 
-
     [ClientCallback]
     private void Start()
     {
@@ -49,6 +49,7 @@ public class NetGameManager : NetworkManager
 
         if (numPlayers == MAX_PLAYERS)
         {
+            messageSystem.RpcUpdateScore(0, 0);
             StartCoroutine(GameLoop());
         }
     }
@@ -74,6 +75,7 @@ public class NetGameManager : NetworkManager
 
         if (gameWinner != null)
         {
+            yield return StartCoroutine(GiveRewards());
             ServerChangeScene("MainMenu");
             Shutdown();
             //SceneManager.LoadSceneAsync(0);
@@ -97,7 +99,7 @@ public class NetGameManager : NetworkManager
 
         timeRemaining = MATCH_DURATION;
         UpdateTimer();
-        
+
         StartCoroutine(Countdown());
 
         yield return startWait;
@@ -181,9 +183,6 @@ public class NetGameManager : NetworkManager
 
         for (int i = 0; i < players.Count; i++)
         {
-            Debug.Log(i);
-            Debug.Log(players[i].tag);
-            Debug.Log(players[i].isAlive);
             if (players[i].isAlive)
                 numPlayersLeft++;
         }
@@ -200,7 +199,7 @@ public class NetGameManager : NetworkManager
     {
         if (timerIsRunning)
         {
-            if (timeRemaining > 0)
+            if (timeRemaining > 1)
             {
                 timeRemaining -= Time.deltaTime;
                 UpdateTimer();
@@ -222,6 +221,10 @@ public class NetGameManager : NetworkManager
 
     private NetPlayerController GetRoundWinner()
     {
+        if (timeRemaining <= 1)
+        {
+            return players.Find(player => player.playerTag == "Runner");
+        }
         for (int i = 0; i < players.Count; i++)
         {
             if (players[i].isAlive)
@@ -241,6 +244,59 @@ public class NetGameManager : NetworkManager
         }
 
         return null;
+    }
+
+    private IEnumerator GiveRewards()
+    {
+        for (int i = 0; i < players.Count; i++)
+        {
+            PowerUps powerUps;
+            int rankPoints;
+            if (players[i] == gameWinner)
+            {
+                powerUps = new PowerUps
+                {
+                    sprintTicket = Random.Range(10, 15),
+                    marathonTicket = Random.Range(5, 10),
+                    foodCoupon = Random.Range(4, 6),
+                    milkCoupon = Random.Range(4, 6),
+                    exchangeProgram = Random.Range(1, 2)
+                };
+                rankPoints = Random.Range(8, 12);
+            }
+            else
+            {
+                powerUps = new PowerUps
+                {
+                    sprintTicket = Random.Range(2, 5),
+                    marathonTicket = Random.Range(1, 4),
+                    foodCoupon = Random.Range(0, 2),
+                    milkCoupon = Random.Range(0, 2),
+                    exchangeProgram = 0
+                };
+                rankPoints = Random.Range(2, 6);
+            }
+            var newPlayerData = new PlayerData();
+            newPlayerData.powerUps = powerUps;
+            newPlayerData.stats.rankPoints = rankPoints;
+            var jsonData = newPlayerData.ToJson();
+
+            var playerConn = players[i].gameObject.GetComponent<NetworkIdentity>().connectionToClient;
+            Debug.Log($"send data to player {i + 1} conn: {playerConn}");
+            players[i].TargetReceiveRewards(playerConn, jsonData);
+
+            var message = "Your got rewards!";
+            message += "\nSprint Ticket +" + powerUps.sprintTicket.ToString();
+            message += "     Marathon Ticket +" + powerUps.marathonTicket.ToString();
+            message += "\nFood Coupon +" + powerUps.foodCoupon.ToString();
+            message += "     Milk Coupon +" + powerUps.milkCoupon.ToString();
+            message += "\nPlayer Exchange Program +" + powerUps.exchangeProgram.ToString();
+            message += "\nRank Points +" + rankPoints.ToString();
+
+            messageSystem.TargetMessage(playerConn, message);
+        }
+        Debug.Log("send rewards completed!");
+        yield return new WaitForSeconds(5);
     }
 
     private void ResetAllPlayers()
@@ -287,6 +343,12 @@ public class NetGameManager : NetworkManager
     {
         base.OnServerDisconnect(conn);
         UNetServer.OnServerDisconnect(conn);
+    }
+
+    public override void OnClientDisconnect(NetworkConnection conn)
+    {
+        base.OnClientDisconnect(conn);
+        SceneManager.LoadSceneAsync(0);
     }
 
     #endregion

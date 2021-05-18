@@ -9,6 +9,7 @@
 	public class UnityNetworkServer : NetworkBehaviour
 	{
 		public NetConfiguration configuration;
+		public NetworkManager networkManager;
 
 		public PlayerEvent OnPlayerAdded = new PlayerEvent();
 		public PlayerEvent OnPlayerRemoved = new PlayerEvent();
@@ -41,16 +42,14 @@
 
 		public void StartServer()
 		{
-			NetworkServer.Listen(Port);
-		}
-
-		private void OnApplicationQuit()
-		{
-			NetworkServer.Shutdown();
+			Debug.Log("[UnityNetworkServer].StartServer");
+			networkManager.maxConnections = MaxConnections;
+			networkManager.StartServer();
 		}
 
 		private void OnReceiveAuthenticate(NetworkConnection netConn, ReceiveAuthenticateMessage netMsg)
 		{
+			Debug.Log("[UnityNetworkServer].Authenticate received");
 			var conn = _connections.Find(c => c.ConnectionId == netConn.connectionId);
 			if (conn != null)
 			{
@@ -65,7 +64,7 @@
 		{
 			if (configuration.buildType == BuildType.LOCAL) return;
 
-			Debug.LogWarning("Client Connected");
+			Debug.LogWarning("[UnityNetworkServer].Client Connected");
 			var uconn = _connections.Find(c => c.ConnectionId == conn.connectionId);
 			if (uconn == null)
 			{
@@ -82,6 +81,7 @@
 		{
 			if (configuration.buildType == BuildType.LOCAL) return;
 
+			Debug.LogWarning("[UnityNetworkServer].Client Disconnected");
 			var uconn = _connections.Find(c => c.ConnectionId == conn.connectionId);
 			if (uconn != null)
 			{

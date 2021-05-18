@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using Mirror;
+using static PlayerData;
 
 public class NetPlayerController : NetworkBehaviour
 {
@@ -28,6 +28,7 @@ public class NetPlayerController : NetworkBehaviour
 
     private NetPlayerMovement movement;
     private PlayfabLoginRegister loginManager;
+    private PlayfabPlayer playerManager;
 
     [ClientCallback]
     private void Awake()
@@ -36,6 +37,7 @@ public class NetPlayerController : NetworkBehaviour
         if (playfabManager != null)
         {
             loginManager = playfabManager.GetComponent<PlayfabLoginRegister>();
+            playerManager = playfabManager.GetComponent<PlayfabPlayer>();
         }
     }
 
@@ -75,6 +77,8 @@ public class NetPlayerController : NetworkBehaviour
     [Client]
     public void UpdatePlayerData(Color textColor, string status)
     {
+        if (!hasAuthority) return;
+
         var name = "Player " + playerNumber;
         if (loginManager != null)
         {
@@ -112,6 +116,27 @@ public class NetPlayerController : NetworkBehaviour
         movement.enabled = newControl;
     }
 
+    [TargetRpc]
+    public void TargetReceiveRewards(NetworkConnection target, string rawPlayerData)
+    {
+        Debug.Log($"Receive Reward: {rawPlayerData}");
+        var newPlayerData = PlayerData.FromJson(rawPlayerData);
+        var myPowerUps = loginManager != null ? loginManager.playerData.powerUps : new PlayerData().powerUps;
+
+        myPowerUps.sprintTicket += newPlayerData.powerUps.sprintTicket;
+        myPowerUps.marathonTicket += newPlayerData.powerUps.marathonTicket;
+        myPowerUps.foodCoupon += newPlayerData.powerUps.foodCoupon;
+        myPowerUps.milkCoupon += newPlayerData.powerUps.milkCoupon;
+        myPowerUps.exchangeProgram += newPlayerData.powerUps.exchangeProgram;
+
+        if (loginManager != null)
+        {
+            loginManager.playerData.stats.rankPoints += newPlayerData.stats.rankPoints;
+            loginManager.playerData.powerUps = myPowerUps;
+            playerManager.SendPlayerData(loginManager.playerData);
+        }
+    }
+
     // Used at the start of each round to put the tank into it's default state.
     [ClientRpc]
     public void RpcReset()
@@ -127,6 +152,8 @@ public class NetPlayerController : NetworkBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (!hasAuthority) return;
+
         if (gameObject.CompareTag("Runner"))
         {
             if (collision.collider.CompareTag("Chaser"))

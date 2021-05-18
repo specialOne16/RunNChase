@@ -12,7 +12,7 @@ public class NetConfiguration : MonoBehaviour
 	public bool playFabDebugging = false;
 
 	[Header("Server Configuration")]
-	public float shutdownTimeout = 900f;
+	public float shutdownTimeout = 1800f;
 
 	private void Awake()
     {

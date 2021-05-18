@@ -12,7 +12,14 @@ public class PlayfabPersist : MonoBehaviour
         }
         else if (instance != this)
         {
-            Destroy(gameObject);
+            // Transfer playerData to the new instance
+            var oldLoginManager = instance.gameObject.GetComponent<PlayfabLoginRegister>();
+            var newLoginManager = gameObject.GetComponent<PlayfabLoginRegister>();
+            newLoginManager.playerData = oldLoginManager.playerData;
+            newLoginManager.hasLogin = oldLoginManager.hasLogin;
+
+            Destroy(instance.gameObject);
+            instance = this;
         }
 
         DontDestroyOnLoad(gameObject);

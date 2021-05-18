@@ -16,7 +16,7 @@ public class PlayfabLoginRegister : MonoBehaviour
     public InputField emailInput;
     public InputField passwordInput;
 
-    private Boolean hasLogin = false;
+    [HideInInspector] public bool hasLogin = false;
     public PlayerData playerData = new PlayerData();
 
     private void ClearTextFields()

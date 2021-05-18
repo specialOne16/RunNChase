@@ -189,8 +189,10 @@ MonoBehaviour:
   playerNumber: 0
   isAlive: 0
   playerTag: 
+  messageSystem: {fileID: 0}
   score: 0
-  nameText: {fileID: 0}
+  coloredName: 
+  coloredStatus: 
   spawnPosition: {x: 0, y: 0, z: 0}
   spawnRotation: {x: 0, y: 0, z: 0, w: 0}
   controlEnabled: 0
@@ -232,12 +234,12 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   clientAuthority: 1
-  localPositionSensitivity: 0.001
-  localRotationSensitivity: 0.001
-  localScaleSensitivity: 0.001
+  localPositionSensitivity: 0.01
+  localRotationSensitivity: 0.01
+  localScaleSensitivity: 0.01
   compressRotation: 0
   interpolateScale: 1
-  syncScale: 1
+  syncScale: 0
 --- !u!114 &-9004719964652042337
 MonoBehaviour:
   m_ObjectHideFlags: 0

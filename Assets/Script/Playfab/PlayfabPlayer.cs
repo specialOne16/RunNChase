@@ -123,6 +123,23 @@ public class PlayfabPlayer : MonoBehaviour
         PlayfabUtils.OnSuccess(feedbackText, "Email for password reset sent!");
     }
 
+    public void SendPlayerData(PlayerData playerData)
+    {
+        var request = new UpdateUserDataRequest
+        {
+            Data = new Dictionary<string, string>
+            {
+                { "PlayerData", playerData.ToJson() }
+            }
+        };
+        PlayFabClientAPI.UpdateUserData(request, OnDataSent, OnError);
+    }
+
+    private void OnDataSent(UpdateUserDataResult res)
+    {
+        Debug.Log("Updated player data sent!");
+    }
+
     private void OnError(PlayFabError error)
     {
         PlayfabUtils.OnError(feedbackText, error.ErrorMessage);
