@@ -78,6 +78,8 @@ public class NetGameManager : NetworkManager
             yield return StartCoroutine(GiveRewards());
             ServerChangeScene("MainMenu");
             Shutdown();
+            yield return new WaitForSeconds(30f);
+            Application.Quit();
             //SceneManager.LoadSceneAsync(0);
         }
         else
