@@ -23,7 +23,7 @@ public class PlayfabMatchmaker : MonoBehaviour
     public GameObject playBtn;
     public GameObject backBtn;
 
-    private PlayfabLoginRegister loginManager;
+    private PlayfabLogin loginManager;
     private string ticketId;
     private Coroutine pollTicketCoroutine;
 
@@ -33,7 +33,7 @@ public class PlayfabMatchmaker : MonoBehaviour
 
     public void OnPageActive()
     {
-        loginManager = gameObject.GetComponent<PlayfabLoginRegister>();
+        loginManager = gameObject.GetComponent<PlayfabLogin>();
         feedbackText.text = "";
         leaveBtn.SetActive(false);
         playBtn.SetActive(false);

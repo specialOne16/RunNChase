@@ -15,7 +15,7 @@ public class PlayfabLogin : MonoBehaviour
     public InputField emailInput;
     public InputField passwordInput;
 
-    private Boolean hasLogin = false;
+    public Boolean hasLogin = false;
     public PlayerData playerData = new PlayerData();
 
     private void ClearTextFields()
@@ -39,6 +39,9 @@ public class PlayfabLogin : MonoBehaviour
 
     public void Login()
     {
+        Debug.Log("Logging in");
+        Debug.Log(emailInput.text);
+        Debug.Log(passwordInput.text);
         if (emailInput.text.Equals("") || passwordInput.text.Equals(""))
         {
             PlayfabUtils.OnError(feedbackText, "Login needs email and password!");
@@ -60,6 +63,7 @@ public class PlayfabLogin : MonoBehaviour
                 GetUserAccountInfo = true
             }
         };
+        Debug.Log("Sending the data...");
         PlayFabClientAPI.LoginWithEmailAddress(request, OnLoginSuccess, OnError);
     }
 
@@ -109,5 +113,20 @@ public class PlayfabLogin : MonoBehaviour
     private void OnError(PlayFabError error)
     {
         PlayfabUtils.OnError(feedbackText, error.ErrorMessage);
+    }
+
+    public Boolean isLoggedIn()
+    {
+        return hasLogin;
+    }
+
+    public String getDisplayName()
+    {
+        return playerData.accountInfo.name;
+    }
+
+    public String getEmail()
+    {
+        return playerData.accountInfo.email;
     }
 }

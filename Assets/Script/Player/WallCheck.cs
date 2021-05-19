@@ -16,7 +16,7 @@ public class WallCheck : MonoBehaviour
     {
         if (collision.gameObject.layer == 9)
         {
-            player.GetComponent<PlayerMovement>().isTouchingWall = true;
+            //player.GetComponent<PlayerMovement>().isTouchingWall = true;
         }
     }
 
@@ -24,7 +24,7 @@ public class WallCheck : MonoBehaviour
     {
         if (collision.gameObject.layer == 9)
         {
-            player.GetComponent<PlayerMovement>().isTouchingWall = false;
+            //player.GetComponent<PlayerMovement>().isTouchingWall = false;
         }
     }
 }

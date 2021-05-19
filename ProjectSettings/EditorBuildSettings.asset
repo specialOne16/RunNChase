@@ -7,7 +7,7 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/PlayfabTesting/MainMenu.unity
-    guid: 6cc09252c4e01894a8087cdc720358da
+    guid: 50ef2263c4e77924ca3add780e2f248a
   - enabled: 1
     path: Assets/Scenes/Mirror/[MAIN] Game.unity
     guid: 5a67dfd885861304ca59101d50b15ebf

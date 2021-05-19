@@ -14,11 +14,11 @@ public class PlayfabLeaderboard : MonoBehaviour
     public GameObject tableItemPrefab;
     public Transform tableTransform;
 
-    private PlayfabLoginRegister loginManager;
+    private PlayfabLogin loginManager;
 
     public void OnPageActive()
     {
-        loginManager = gameObject.GetComponent<PlayfabLoginRegister>();
+        loginManager = gameObject.GetComponent<PlayfabLogin>();
         feedbackText.text = "";
         usernameText.text = loginManager.getDisplayName();
         if (loginManager.isLoggedIn())
@@ -30,46 +30,43 @@ public class PlayfabLeaderboard : MonoBehaviour
         }
     }
 
-    public void SendScore()
+    public void SendWinStatistic(int newWin)
     {
         if (!loginManager.isLoggedIn())
         {
-            PlayfabUtils.OnError(feedbackText, "Send score needs login first!");
+            Debug.LogError("Win Statistic failed to sent: Not logged in.");
             return;
         }
-        var randomScore = Random.Range(0, 100);
         var request = new UpdatePlayerStatisticsRequest
         {
             Statistics = new List<StatisticUpdate>
             {
                 new StatisticUpdate
                 {
-                    StatisticName = "HighScore",
-                    Value = randomScore
+                    StatisticName = "MostWin",
+                    Value = newWin
                 }
             }
         };
-        PlayFabClientAPI.UpdatePlayerStatistics(request, OnScoreSent, OnError);
+        PlayFabClientAPI.UpdatePlayerStatistics(request, OnWinSent, OnError);
     }
 
-    private void OnScoreSent(UpdatePlayerStatisticsResult res)
+    private void OnWinSent(UpdatePlayerStatisticsResult res)
     {
-        PlayfabUtils.OnSuccess(feedbackText, "Send score success!");
-        Invoke(nameof(GetLeaderboard), .5f);
+        Debug.Log("Send win statistic success!");
     }
 
     public void GetLeaderboard()
     {
-        var request = new GetLeaderboardRequest
+        var request = new GetLeaderboardAroundPlayerRequest
         {
-            StatisticName = "HighScore",
-            StartPosition = 0,
+            StatisticName = "MostWin",
             MaxResultsCount = 6
         };
-        PlayFabClientAPI.GetLeaderboard(request, OnLeaderboardGet, OnError);
+        PlayFabClientAPI.GetLeaderboardAroundPlayer(request, OnLeaderboardGet, OnError);
     }
 
-    public void OnLeaderboardGet(GetLeaderboardResult res)
+    public void OnLeaderboardGet(GetLeaderboardAroundPlayerResult res)
     {
         foreach (Transform item in tableTransform)
         {
@@ -79,10 +76,10 @@ public class PlayfabLeaderboard : MonoBehaviour
         {
             GameObject newItem = Instantiate(tableItemPrefab, tableTransform);
             Text[] texts = newItem.GetComponentsInChildren<Text>();
-            texts[0].text = item.Position.ToString();
+            texts[0].text = (item.Position + 1).ToString();
             texts[1].text = item.DisplayName;
             texts[2].text = item.StatValue.ToString();
-            if (item.DisplayName == loginManager.getDisplayName())
+            if (item.PlayFabId == loginManager.playerData.accountInfo.playfabId)
             {
                 texts[0].color = Color.yellow;
                 texts[1].color = Color.yellow;

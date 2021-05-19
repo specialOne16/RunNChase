@@ -29,11 +29,11 @@ public class PlayfabPlayer : MonoBehaviour
     [Header("Input Fields")]
     public InputField nameInput;
 
-    private PlayfabLoginRegister loginManager;
+    private PlayfabLogin loginManager;
 
     public void OnPageActive()
     {
-        loginManager = gameObject.GetComponent<PlayfabLoginRegister>();
+        loginManager = gameObject.GetComponent<PlayfabLogin>();
         feedbackText.text = "";
 
         nameText.text = loginManager.getDisplayName();
