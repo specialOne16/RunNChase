@@ -60,6 +60,9 @@ public class NetPlayerMovement : NetworkBehaviour
         rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         movementAudio = GetComponent<AudioSource>();
+        if (isServer) return;
+
+        movementAudio.volume = PlayerPrefs.GetFloat("sfxVol", 0.4f);
     }
 
     private void Start()

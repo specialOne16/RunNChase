@@ -33,10 +33,11 @@ public class NetGameManager : NetworkManager
     private NetPlayerController roundWinner;
     private NetPlayerController gameWinner;
 
-    [ClientCallback]
-    private void Start()
+    public override void OnStartClient()
     {
-        // BG Sound play here
+        var bgSound = GetComponent<AudioSource>();
+        bgSound.volume = PlayerPrefs.GetFloat("musicVol", 0.2f);
+        bgSound.Play();
     }
 
     public override void OnServerAddPlayer(NetworkConnection conn)
@@ -78,6 +79,7 @@ public class NetGameManager : NetworkManager
             yield return StartCoroutine(GiveRewards());
             ServerChangeScene("MainMenu");
             Shutdown();
+            Debug.Log("[NetGameManager].Starting to shutdown in 30 seconds");
             yield return new WaitForSeconds(30f);
             Application.Quit();
             //SceneManager.LoadSceneAsync(0);
@@ -282,18 +284,19 @@ public class NetGameManager : NetworkManager
             newPlayerData.powerUps = powerUps;
             newPlayerData.stats.rankPoints = rankPoints;
             var jsonData = newPlayerData.ToJson();
+            var isWinner = players[i].playerNumber == gameWinner.playerNumber;
 
             var playerConn = players[i].gameObject.GetComponent<NetworkIdentity>().connectionToClient;
             Debug.Log($"send data to player {i + 1} conn: {playerConn}");
-            players[i].TargetReceiveRewards(playerConn, jsonData);
+            players[i].TargetReceiveRewards(playerConn, jsonData, isWinner);
 
             var message = "Your got rewards!";
-            message += "\nSprint Ticket +" + powerUps.sprintTicket.ToString();
-            message += "     Marathon Ticket +" + powerUps.marathonTicket.ToString();
-            message += "\nFood Coupon +" + powerUps.foodCoupon.ToString();
-            message += "     Milk Coupon +" + powerUps.milkCoupon.ToString();
-            message += "\nPlayer Exchange Program +" + powerUps.exchangeProgram.ToString();
-            message += "\nRank Points +" + rankPoints.ToString();
+            message += "\nSprint Ticket " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.green) + ">" + "+" + powerUps.sprintTicket.ToString() + "</color>";
+            message += "     Marathon Ticket " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.green) + ">" + "+" + powerUps.marathonTicket.ToString() + "</color>";
+            message += "\nFood Coupon " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.green) + ">" + "+" + powerUps.foodCoupon.ToString() + "</color>";
+            message += "     Milk Coupon " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.green) + ">" + "+" + powerUps.milkCoupon.ToString() + "</color>";
+            message += "\nPlayer Exchange Program " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.green) + ">" + "+" + powerUps.exchangeProgram.ToString() + "</color>";
+            message += "\nRank Points " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.green) + ">" + "+" + rankPoints.ToString() + "</color>";
 
             messageSystem.TargetMessage(playerConn, message);
         }

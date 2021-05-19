@@ -29,6 +29,7 @@ public class NetPlayerController : NetworkBehaviour
     private NetPlayerMovement movement;
     private PlayfabLogin loginManager;
     private PlayfabPlayer playerManager;
+    private PlayfabLeaderboard leaderboardManager;
 
     [ClientCallback]
     private void Awake()
@@ -38,6 +39,7 @@ public class NetPlayerController : NetworkBehaviour
         {
             loginManager = playfabManager.GetComponent<PlayfabLogin>();
             playerManager = playfabManager.GetComponent<PlayfabPlayer>();
+            leaderboardManager = playfabManager.GetComponent<PlayfabLeaderboard>();
         }
     }
 
@@ -117,7 +119,7 @@ public class NetPlayerController : NetworkBehaviour
     }
 
     [TargetRpc]
-    public void TargetReceiveRewards(NetworkConnection target, string rawPlayerData)
+    public void TargetReceiveRewards(NetworkConnection target, string rawPlayerData, bool isWinner)
     {
         Debug.Log($"Receive Reward: {rawPlayerData}");
         var newPlayerData = PlayerData.FromJson(rawPlayerData);
@@ -134,6 +136,8 @@ public class NetPlayerController : NetworkBehaviour
             loginManager.playerData.stats.rankPoints += newPlayerData.stats.rankPoints;
             loginManager.playerData.powerUps = myPowerUps;
             playerManager.SendPlayerData(loginManager.playerData);
+            int numWinAdd = isWinner ? 1 : 0;
+            leaderboardManager.SendWinStatistic(numWinAdd);
         }
     }
 
