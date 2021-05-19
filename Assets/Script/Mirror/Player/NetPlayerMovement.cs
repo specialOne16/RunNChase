@@ -5,6 +5,7 @@ public class NetPlayerMovement : NetworkBehaviour
 {
     [Header("Game Configuration")]
     [HideInInspector] public int playerNumber = 1;
+    [HideInInspector] public float stamina = 100;
 
     [Header("Physics Configuration")]
     public float speed = 10;
@@ -93,6 +94,7 @@ public class NetPlayerMovement : NetworkBehaviour
         moveValue = Input.GetAxis(moveAxisName);
         jumpValue = Input.GetButtonDown(jumpAxisName);
         slideValue = Input.GetKeyDown(slideButtonName);
+        CheckBool();
 
         Jump();
         Move();
@@ -101,6 +103,11 @@ public class NetPlayerMovement : NetworkBehaviour
         WallJump();
 
         ControlAnimation();
+    }
+
+    public void CheckBool()
+    {
+        isTouchingWall = Physics2D.OverlapBox(wallCheckPoint.position, wallCheckSize, 0, wall);
     }
 
     private void ControlAnimation()
@@ -208,6 +215,7 @@ public class NetPlayerMovement : NetworkBehaviour
         if ((isWallSlide || isTouchingWall) && Input.GetButtonDown("Jump"))
         {
             rigidbody2D.AddForce(new Vector2(wallJumpForce * wallJumpDirection * wallJumpAngle.x, wallJumpForce * wallJumpAngle.y), ForceMode2D.Impulse);
+            CmdFlip(wallJumpDirection < 0);
         }
     }
 
@@ -275,7 +283,6 @@ public class NetPlayerMovement : NetworkBehaviour
 
     private void CreateDust()
     {
-        Debug.Log($"Dust created for player {playerNumber}");
         dust.Play();
     }
 

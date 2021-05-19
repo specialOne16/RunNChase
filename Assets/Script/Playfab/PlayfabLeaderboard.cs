@@ -32,11 +32,6 @@ public class PlayfabLeaderboard : MonoBehaviour
 
     public void SendWinStatistic(int newWin)
     {
-        if (!loginManager.isLoggedIn())
-        {
-            Debug.LogError("Win Statistic failed to sent: Not logged in.");
-            return;
-        }
         var request = new UpdatePlayerStatisticsRequest
         {
             Statistics = new List<StatisticUpdate>

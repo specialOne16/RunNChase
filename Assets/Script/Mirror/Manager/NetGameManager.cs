@@ -144,6 +144,7 @@ public class NetGameManager : NetworkManager
     private IEnumerator RoundEnding()
     {
         DisablePlayerControl();
+        //CalculatePlayerStamina();
 
         roundWinner = null;
 
@@ -291,18 +292,26 @@ public class NetGameManager : NetworkManager
             players[i].TargetReceiveRewards(playerConn, jsonData, isWinner);
 
             var message = "Your got rewards!";
-            message += "\nSprint Ticket " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.green) + ">" + "+" + powerUps.sprintTicket.ToString() + "</color>";
-            message += "     Marathon Ticket " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.green) + ">" + "+" + powerUps.marathonTicket.ToString() + "</color>";
-            message += "\nFood Coupon " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.green) + ">" + "+" + powerUps.foodCoupon.ToString() + "</color>";
-            message += "     Milk Coupon " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.green) + ">" + "+" + powerUps.milkCoupon.ToString() + "</color>";
-            message += "\nPlayer Exchange Program " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.green) + ">" + "+" + powerUps.exchangeProgram.ToString() + "</color>";
-            message += "\nRank Points " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.green) + ">" + "+" + rankPoints.ToString() + "</color>";
+            message += "\nSprint Ticket " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.magenta) + ">" + "+" + powerUps.sprintTicket.ToString() + "</color>";
+            message += "     Marathon Ticket " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.magenta) + ">" + "+" + powerUps.marathonTicket.ToString() + "</color>";
+            message += "\nFood Coupon " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.magenta) + ">" + "+" + powerUps.foodCoupon.ToString() + "</color>";
+            message += "     Milk Coupon " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.magenta) + ">" + "+" + powerUps.milkCoupon.ToString() + "</color>";
+            message += "\nPlayer Exchange Program " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.magenta) + ">" + "+" + powerUps.exchangeProgram.ToString() + "</color>";
+            message += "\nRank Points " + "<color=#" + ColorUtility.ToHtmlStringRGB(Color.magenta) + ">" + "+" + rankPoints.ToString() + "</color>";
 
             messageSystem.TargetMessage(playerConn, message);
         }
         Debug.Log("send rewards completed!");
         yield return new WaitForSeconds(5);
     }
+
+    //private void CalculatePlayerStamina()
+    //{
+    //    for (int i = 0; i < players.Count; i++)
+    //    {
+    //        players[i].RpcCalculateStamina(MATCH_DURATION - timeRemaining);
+    //    }
+    //}
 
     private void ResetAllPlayers()
     {

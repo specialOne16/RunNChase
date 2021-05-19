@@ -159,9 +159,11 @@ public class PlayfabMatchmaker : MonoBehaviour
                 leaveBtn.SetActive(false);
                 PrepareMatch(res.MatchId);
                 break;
-            case "Cancelled":
-                Debug.Log("Getting Cancelled!");
+            case "Canceled":
+                PlayfabUtils.OnError(feedbackText, "Matchmaking timeout! Please try again...");
                 StopCoroutine(pollTicketCoroutine);
+                leaveBtn.SetActive(false);
+                backBtn.GetComponent<Button>().interactable = true;
                 break;
         }
     }

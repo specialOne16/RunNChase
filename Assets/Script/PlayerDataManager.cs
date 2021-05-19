@@ -23,7 +23,6 @@ public class PlayerDataManager : MonoBehaviour
     {
         loginManager = GameObject.Find("PlayfabManager").GetComponent<PlayfabLogin>();
         playerManager = GameObject.Find("PlayfabManager").GetComponent<PlayfabPlayer>();
-        Debug.Log(loginManager.playerData.ToJson());
     }
 
     public void OnPageActive()
@@ -33,8 +32,6 @@ public class PlayerDataManager : MonoBehaviour
 
     private void setupDisplay()
     {
-        Debug.Log(speed);
-        Debug.Log(loginManager.playerData.stats.maxSpeed);
         speed.text = loginManager.playerData.stats.maxSpeed.ToString();
         sprint.text = loginManager.playerData.powerUps.sprintTicket.ToString();
         stamina.text = loginManager.playerData.stats.minStamina.ToString();
