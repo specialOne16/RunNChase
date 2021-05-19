@@ -114,6 +114,30 @@ public class GameManager : MonoBehaviour
         timeRemaining = matchDuration;
     }
 
+    public int getScore(GameObject obj)
+    {
+        if(obj.name.Equals(player1.name))
+        {
+            Debug.Log("Masok if gan");
+            return scoreP1;
+        }
+        else if (obj.name.Equals(player2.name))
+        {
+            Debug.Log("Masok elif gan");
+            return scoreP2;
+        }
+        else
+        {
+            Debug.Log("Masok else gan");
+            return 0;
+        }
+    }
+
+    public float getRoundDuration()
+    {
+        return matchDuration - timeRemaining;
+    }
+
     private void OnGUI()
     {
         GUI.TextArea(new Rect(Screen.width / 2 - 200, Screen.height/4, 400, 110), $"{Mathf.RoundToInt(timeRemaining)} \n{scoreP1} - {scoreP2}", new GUIStyle(GUI.skin.textArea));

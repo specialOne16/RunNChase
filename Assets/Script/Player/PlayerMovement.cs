@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
 
     private float moveDirection;
     private Vector3 initPosition;
+    private Quaternion initRotation;
 
     // Jumping
     public float jumpForce;
@@ -37,16 +38,49 @@ public class PlayerMovement : MonoBehaviour
     private bool isSliding = false;
     private float timeCount;
 
+
+    // Player Data
+    public float K = 1;
+    private PlayerData playerData = new PlayerData();
+    private float playerSpeed;
+    private float playerStamina;
+    private float playerSize;
+    private float playerXSize;
+    private float playerYSize;
+    private float minStamina;
+    private float maxStamina;
+    
+
     // Other
     private bool facing = true;
+    private bool matchStart = false;
     private Rigidbody2D rb2D;
     public GameManager gameManager;
 
+    private void Awake()
+    {
+        playerData.stats.height = 2;
+        playerData.stats.width = 3;
+        playerData.stats.maxSpeed = 5;
+        playerData.stats.minStamina = 6;
+
+        playerXSize = playerData.stats.width;
+        playerYSize = playerData.stats.height;
+        playerSize = playerXSize * playerYSize;
+
+        minStamina = playerData.stats.minStamina + K * playerSize * Random.Range(1, gameManager.getScore(gameObject)+1);
+
+        maxStamina = minStamina;
+
+    }
+
     void Start()
     {
+        playerStamina = minStamina + playerSize * 5 / 8;
         rb2D = GetComponent<Rigidbody2D>();
         wallJumpAngle.Normalize(); 
         initPosition = transform.position;
+        initRotation = transform.rotation;
         RestartPosition();
     }
 
@@ -58,6 +92,7 @@ public class PlayerMovement : MonoBehaviour
         WallSlide();
         WallJump();
         sliding();
+        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -73,7 +108,41 @@ public class PlayerMovement : MonoBehaviour
 
     public void RestartPosition()
     {
+        float x = Random.Range(1, gameManager.getScore(gameObject)+1);
+        playerSpeed = Map(playerData.stats.maxSpeed * Random.Range(0.5f, 1.5f), 0, 9, 9, 16); 
+        if (playerSpeed < 0) playerSpeed = 0;
+        speed = playerSpeed;
+
+        float mult;
+        if (gameObject.tag.Equals("Chaser"))
+        {
+            mult = 1.2f;
+        }
+        else
+        {
+            mult = 0.9f;
+        }
+
+        if (gameManager.getRoundDuration() < 5.0f)
+        {
+            playerStamina -= Mathf.Sqrt(playerSize) * 5 * mult / 8;
+        }
+        else
+        {
+            playerStamina -= Mathf.Sqrt(playerSize) * Random.Range(gameManager.getRoundDuration() - 5.0f, gameManager.getRoundDuration()) * mult;
+        }
+        if (playerStamina < 0)
+        {
+            playerStamina = 0;
+        }
+        minStamina = playerStamina;
         transform.position = initPosition;
+        transform.rotation = initRotation;
+    }
+
+    private float Map(float value, float from1, float to1, float from2, float to2)
+    {
+        return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
     }
 
     private void Movement()
